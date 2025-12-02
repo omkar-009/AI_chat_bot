@@ -36,6 +36,7 @@ function App() {
     try {
       const res = await axios.post("http://localhost:5000/api/login", {
         username,
+        contact_no,
         password,
       });
       localStorage.setItem("token", res.data.token);
@@ -51,6 +52,7 @@ function App() {
     try {
       await axios.post("http://localhost:5000/api/register", {
         username,
+        contact_no,
         password,
       });
       alert("Registered! Now login.");
