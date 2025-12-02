@@ -131,7 +131,7 @@ function App() {
         <div className="modal">
           <div className="modal-box">
             <h3>Login</h3>
-            <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+            <input placeholder="Username/Contact number" onChange={(e) => setUsername(e.target.value)} />
             <input type="password" placeholder="Password"
                    onChange={(e) => setPassword(e.target.value)} />
             <button onClick={loginUser}>Login</button>
@@ -146,6 +146,7 @@ function App() {
           <div className="modal-box">
             <h3>Register</h3>
             <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+            <input placeholder="Contact number" onChange={(e) => setUsername(e.target.value)} />
             <input type="password" placeholder="Password"
                    onChange={(e) => setPassword(e.target.value)} />
             <button onClick={registerUser}>Create Account</button>

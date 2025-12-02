@@ -27,47 +27,80 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
 
 // Middleware to verify JWT
-function auth(req, res, next) {
+const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Invalid token" });
+
     req.user = decoded;
     next();
   });
-}
+};
 
 // REGISTER API
 app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-  const hashed = await bcrypt.hash(password, 10);
+  const { username, contact_no, password } = req.body;
 
+  if (!username || !contact_no || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  // Check if user already exists by contact number
   db.query(
-    "INSERT INTO users(username, password) VALUES (?, ?)",
-    [username, hashed],
-    (err) => {
-      if (err) return res.status(400).json({ message: "User already exists" });
-      res.json({ message: "Registered successfully" });
+    "SELECT * FROM users WHERE contact_no = ?",
+    [contact_no],
+    async (err, rows) => {
+      if (err) return res.status(500).json({ message: "Database error" });
+
+      if (rows.length > 0) {
+        return res.status(409).json({ message: "User already exists with this number" });
+      }
+
+      // Hash password and insert
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      db.query(
+        "INSERT INTO users (username, contact_no, password) VALUES (?, ?, ?)",
+        [username, contact_no, hashedPassword],
+        (err) => {
+          if (err) return res.status(500).json({ message: "Insert failed" });
+          res.json({ message: "Registered successfully" });
+        }
+      );
     }
   );
 });
 
+
 // LOGIN API
 app.post("/api/login", (req, res) => {
-  const { username, password } = req.body;
+  const { contact_no, password } = req.body;
 
-  db.query("SELECT * FROM users WHERE username = ?", [username], async (err, rows) => {
-    if (err || rows.length === 0) return res.status(400).json({ message: "Invalid credentials" });
+  if (!contact_no || !password)
+    return res.status(400).json({ message: "All fields required" });
 
-    const user = rows[0];
-    const valid = await bcrypt.compare(password, user.password);
+  db.query(
+    "SELECT * FROM users WHERE contact_no = ?",
+    [contact_no],
+    async (err, rows) => {
+      if (err || rows.length === 0)
+        return res.status(400).json({ message: "Invalid contact number or password" });
 
-    if (!valid) return res.status(400).json({ message: "Invalid credentials" });
+      const user = rows[0];
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token, userId: user.id });
-  });
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid)
+        return res.status(400).json({ message: "Invalid contact number or password" });
+
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.json({ message: "Login successful", token, userId: user.id });
+    }
+  );
 });
 
 // save history
