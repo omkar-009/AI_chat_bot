@@ -172,30 +172,38 @@ function App() {
         <div className="modal">
           <div className="modal-box">
             <h3>Register</h3>
-      
+
             <input
               placeholder="Username"
               onChange={(e) => setUsername(e.target.value)}
             />
-      
+
             <input
               placeholder="Contact number"
               onChange={(e) => setContactNo(e.target.value)}
             />
-      
+
             <input
               type="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
-      
+
             <button onClick={registerUser}>Create Account</button>
-      
-            <p onClick={() => { setShowRegister(false); setShowLogin(true); }}>
+
+            <p
+              onClick={() => {
+                setShowRegister(false);
+                setShowLogin(true);
+              }}
+            >
               Already have an account?
             </p>
           </div>
         </div>
       )}
+    </div>
+  );
+}
 
 export default App;
