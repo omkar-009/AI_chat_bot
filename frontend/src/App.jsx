@@ -10,6 +10,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [username, setUsername] = useState("");
+  const [contactNo, setContactNo] = useState("");
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
 
@@ -36,9 +37,10 @@ function App() {
     try {
       const res = await axios.post("http://backendaichatbot.in/api/login", {
         username,
-        contact_no,
+        contact_no: contactNo,
         password,
       });
+  
       localStorage.setItem("token", res.data.token);
       setAuthenticated(true);
       setShowLogin(false);
@@ -52,9 +54,10 @@ function App() {
     try {
       await axios.post("http://backendaichatbot.in/api/register", {
         username,
-        contact_no,
+        contact_no: contactNo,
         password,
       });
+  
       alert("Registered! Now login.");
       setShowRegister(false);
       setShowLogin(true);
@@ -133,11 +136,33 @@ function App() {
         <div className="modal">
           <div className="modal-box">
             <h3>Login</h3>
-            <input placeholder="Username/Contact number" onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password"
-                   onChange={(e) => setPassword(e.target.value)} />
+      
+            <input
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+      
+            <input
+              placeholder="Contact number"
+              onChange={(e) => setContactNo(e.target.value)}
+            />
+      
+            <input
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+      
             <button onClick={loginUser}>Login</button>
-            <p onClick={() => { setShowLogin(false); setShowRegister(true); }}>New here? Register</p>
+      
+            <p
+              onClick={() => {
+                setShowLogin(false);
+                setShowRegister(true);
+              }}
+            >
+              New here? Register
+            </p>
           </div>
         </div>
       )}
@@ -147,17 +172,30 @@ function App() {
         <div className="modal">
           <div className="modal-box">
             <h3>Register</h3>
-            <input placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-            <input placeholder="Contact number" onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password"
-                   onChange={(e) => setPassword(e.target.value)} />
+      
+            <input
+              placeholder="Username"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+      
+            <input
+              placeholder="Contact number"
+              onChange={(e) => setContactNo(e.target.value)}
+            />
+      
+            <input
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+      
             <button onClick={registerUser}>Create Account</button>
-            <p onClick={() => { setShowRegister(false); setShowLogin(true); }}>Already have an account?</p>
+      
+            <p onClick={() => { setShowRegister(false); setShowLogin(true); }}>
+              Already have an account?
+            </p>
           </div>
         </div>
       )}
-    </div>
-  );
-}
 
 export default App;
