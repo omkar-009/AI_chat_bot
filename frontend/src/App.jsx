@@ -23,7 +23,7 @@ function App() {
   const loadHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/history", {
+      const res = await axios.get("http://backendaichatbot.in/api/history", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages(res.data);
@@ -34,7 +34,7 @@ function App() {
 
   const loginUser = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
+      const res = await axios.post("http://backendaichatbot.in/api/login", {
         username,
         contact_no,
         password,
@@ -50,7 +50,7 @@ function App() {
 
   const registerUser = async () => {
     try {
-      await axios.post("http://localhost:5000/api/register", {
+      await axios.post("http://backendaichatbot.in/api/register", {
         username,
         contact_no,
         password,
